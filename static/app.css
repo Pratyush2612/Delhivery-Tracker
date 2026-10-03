@@ -1,0 +1,100 @@
+:root {
+  --bg: #ffffff;
+  --bg2: #f6f8fc;
+  --gold: #e89b1e;
+  --gold2: #f5b041;
+  --gold-bg: rgba(232,155,30,0.09);
+  --gold-br: rgba(232,155,30,0.28);
+  --teal: #0d9b7a;
+  --rose: #e55a5a;
+  --text: #1a1d2e;
+  --text2: #5a647a;
+  --text3: #8b93a7;
+  --border: #e2e6f0;
+  --mono: "IBM Plex Mono", monospace;
+  --sans: Inter, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--sans);
+  color: var(--text);
+  background: linear-gradient(180deg, #fafbff 0%, #fff 180px);
+  padding: 28px 6% 80px;
+}
+header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 28px;
+}
+.brand {
+  font-family: var(--mono); font-weight: 600; letter-spacing: -0.01em;
+}
+.brand em { color: var(--gold); font-style: normal; }
+.brand span { color: var(--text3); font-weight: 400; font-size: 0.78rem; margin-left: 8px; }
+.badge {
+  font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--gold);
+  border: 1px solid var(--gold-br); background: var(--gold-bg);
+  padding: 5px 12px; border-radius: 20px;
+}
+.eyebrow {
+  font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 8px;
+}
+h1 { font-family: var(--mono); font-size: clamp(1.6rem, 4vw, 2.4rem); margin-bottom: 10px; }
+.lede { color: var(--text2); max-width: 640px; line-height: 1.65; margin-bottom: 18px; }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 28px; }
+button {
+  font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.04em;
+  padding: 11px 18px; border-radius: 8px; border: 1px solid var(--border);
+  background: #fff; color: var(--text); cursor: pointer;
+}
+button.gold { background: var(--gold); border-color: var(--gold); color: #fff; }
+button:hover { filter: brightness(1.05); }
+.metrics {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px; margin-bottom: 22px;
+}
+.metric {
+  background: #fff; border: 1px solid var(--border); border-radius: 10px;
+  padding: 14px 16px; box-shadow: 0 4px 18px rgba(26,29,46,0.05);
+}
+.metric .lbl {
+  font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--text3); margin-bottom: 6px;
+}
+.metric .val { font-family: var(--mono); font-size: 1.35rem; font-weight: 600; }
+.grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 14px; margin-bottom: 18px; }
+@media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+.card {
+  background: #fff; border: 1px solid var(--border); border-radius: 10px;
+  padding: 16px 18px 18px; margin-bottom: 16px;
+  box-shadow: 0 4px 18px rgba(26,29,46,0.05);
+}
+h2 { font-family: var(--mono); font-size: 0.92rem; margin-bottom: 12px; }
+.bar { display: flex; align-items: center; gap: 10px; margin: 6px 0; font-size: 0.82rem; }
+.bar .name { width: 140px; color: var(--text2); font-family: var(--mono); font-size: 0.72rem; }
+.bar .track { flex: 1; background: var(--bg2); height: 10px; border-radius: 6px; overflow: hidden; }
+.bar .fill { height: 100%; background: var(--gold); }
+.bar .n { width: 28px; text-align: right; font-family: var(--mono); font-size: 0.72rem; }
+.row-head { display: flex; justify-content: space-between; gap: 12px; align-items: center; }
+input {
+  border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px;
+  font-family: var(--sans); min-width: 220px;
+}
+.table-wrap { overflow: auto; max-height: 360px; }
+table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+th {
+  text-align: left; font-family: var(--mono); font-size: 0.64rem;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3);
+  padding: 8px 8px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: #fff;
+}
+td { padding: 8px; border-bottom: 1px solid var(--bg2); }
+.pill {
+  font-family: var(--mono); font-size: 0.64rem; padding: 2px 7px; border-radius: 99px;
+  background: var(--gold-bg); color: #9a6a10;
+}
+.pill.risk { background: rgba(229,90,90,.12); color: var(--rose); }
+.pill.ok { background: rgba(13,155,122,.12); color: var(--teal); }
+.alerts { font-family: var(--mono); font-size: 0.75rem; color: var(--text2); line-height: 1.7; }
+.alert-row { padding: 6px 0; border-bottom: 1px solid var(--bg2); }
+footer { margin-top: 8px; color: var(--text3); font-size: 0.8rem; max-width: 720px; line-height: 1.6; }
