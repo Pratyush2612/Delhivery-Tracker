@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign in — SwiftLogic Courier Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root { --gold:#e89b1e; --text:#1a1d2e; --text2:#5a647a; --border:#e2e6f0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh; display: grid; place-items: center;
+      font-family: Inter, system-ui, sans-serif; color: var(--text);
+      background: linear-gradient(180deg, #fafbff 0%, #fff 220px);
+      padding: 24px;
+    }
+    .card {
+      width: min(420px, 100%); background: #fff; border: 1px solid var(--border);
+      border-radius: 14px; padding: 28px 26px 24px;
+    }
+    .brand { font-family: "IBM Plex Mono", monospace; font-weight: 600; margin-bottom: 18px; }
+    .brand em { color: var(--gold); font-style: normal; }
+    h1 { font-size: 1.35rem; margin-bottom: 6px; }
+    p { color: var(--text2); font-size: 0.92rem; margin-bottom: 18px; line-height: 1.5; }
+    label { display: block; font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: #8b93a7; margin: 12px 0 6px; }
+    input {
+      width: 100%; border: 1px solid var(--border); border-radius: 8px;
+      padding: 11px 12px; font: inherit;
+    }
+    button {
+      width: 100%; margin-top: 18px; border: 0; border-radius: 8px;
+      background: var(--gold); color: #fff; padding: 12px; font-weight: 600; cursor: pointer;
+    }
+    .err { color: #e55a5a; font-size: 0.85rem; margin-top: 12px; }
+    .hint { margin-top: 16px; font-family: "IBM Plex Mono", monospace; font-size: 0.72rem; color: #8b93a7; }
+  </style>
+</head>
+<body>
+  <form class="card" method="post" action="/login">
+    <div class="brand">SwiftLogic<em> AI</em></div>
+    <h1>Sign in</h1>
+    <p>Ops login for the Shiprocket / Delhivery tracker.</p>
+    <label for="email">Email</label>
+    <input id="email" name="email" type="email" autocomplete="username" required value="ops@swiftlogic.ai" />
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password" autocomplete="current-password" required />
+    {% if error %}<div class="err">{{ error }}</div>{% endif %}
+    <button type="submit">Continue</button>
+    <div class="hint">Demo: ops@swiftlogic.ai / demo1234</div>
+  </form>
+</body>
+</html>
