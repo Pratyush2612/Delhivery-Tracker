@@ -1,7 +1,10 @@
-"""Start the tracker on a free localhost port (avoids WinError 10013 on 8080)."""
+"""SwiftLogic Courier Tracker — local or Render.
 
+On Render, PORT is set and the app must bind 0.0.0.0.
+"""
 from __future__ import annotations
 
+import os
 import socket
 
 import uvicorn
@@ -19,6 +22,9 @@ def port_free(port: int) -> bool:
 
 
 def pick_port() -> int:
+    forced = os.getenv("PORT")
+    if forced:
+        return int(forced)
     for port in (8765, 5050, 8000, 8888, 9000, 18080):
         if port_free(port):
             return port
@@ -27,5 +33,6 @@ def pick_port() -> int:
 
 if __name__ == "__main__":
     port = pick_port()
-    print(f"Open http://127.0.0.1:{port}")
-    uvicorn.run("app.main:app", host="127.0.0.1", port=port, reload=False)
+    host = "0.0.0.0" if os.getenv("PORT") else "127.0.0.1"
+    print(f"Open http://{host}:{port}")
+    uvicorn.run("app.main:app", host=host, port=port, reload=False)
