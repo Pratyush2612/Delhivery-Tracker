@@ -53,13 +53,19 @@ class DeleteIn(BaseModel):
 
 @app.on_event("startup")
 def startup() -> None:
-    init_db()
-    start_scheduler()
+    try:
+        init_db()
+        start_scheduler()
+    except Exception as exc:
+        print(f"Startup warning: {exc}")
 
 
 @app.get("/", response_class=HTMLResponse)
 def dashboard(request: Request) -> HTMLResponse:
-    return templates.TemplateResponse(request=request, name="courier-index.html", context={})
+    try:
+        return templates.TemplateResponse(request=request, name="courier-index.html", context={})
+    except TypeError:
+        return templates.TemplateResponse("courier-index.html", {"request": request})
 
 
 @app.get("/health")
