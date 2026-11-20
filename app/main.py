@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-import hashlib
-import hmac
 from typing import Any
 
 import pandas as pd
-from fastapi import FastAPI, Form, HTTPException, Request
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, Field
@@ -17,8 +15,6 @@ from .db import add_shipment, delete_shipment, init_db, list_alerts, list_shipme
 from .jobs import fanout_alerts, refresh_all, refresh_one
 from .normalise import zone_for
 from .scheduler import start_scheduler
-
-COOKIE = "sl_session"
 
 app = FastAPI(
     title="SwiftLogic Courier Tracker",
@@ -34,25 +30,6 @@ app.add_middleware(
 )
 app.mount("/static", StaticFiles(directory=str(STATIC)), name="static")
 templates = Jinja2Templates(directory=str(TEMPLATES))
-
-
-def _token(email: str) -> str:
-    digest = hmac.new(settings.session_secret.encode(), email.encode(), hashlib.sha256).hexdigest()
-    return f"{email}:{digest}"
-
-
-def logged_in(request: Request) -> bool:
-    raw = request.cookies.get(COOKIE, "")
-    email, _, digest = raw.partition(":")
-    if not email or not digest:
-        return False
-    expected = _token(email).split(":", 1)[1]
-    return hmac.compare_digest(digest, expected)
-
-
-def require_login(request: Request) -> None:
-    if not logged_in(request):
-        raise HTTPException(status_code=401, detail="login required")
 
 
 class ShipmentIn(BaseModel):
@@ -80,36 +57,8 @@ def startup() -> None:
     start_scheduler()
 
 
-@app.get("/login", response_class=HTMLResponse)
-def login_page(request: Request, error: str = "") -> HTMLResponse:
-    if logged_in(request):
-        return RedirectResponse("/", status_code=302)
-    return templates.TemplateResponse(request=request, name="login.html", context={"error": error})
-
-
-@app.post("/login")
-def login_submit(email: str = Form(...), password: str = Form(...)) -> RedirectResponse:
-    ok = hmac.compare_digest(email.strip().lower(), settings.login_email.lower()) and hmac.compare_digest(
-        password, settings.login_password
-    )
-    if not ok:
-        return RedirectResponse("/login?error=Invalid+email+or+password", status_code=303)
-    response = RedirectResponse("/", status_code=303)
-    response.set_cookie(COOKIE, _token(email.strip().lower()), httponly=True, samesite="lax")
-    return response
-
-
-@app.get("/logout")
-def logout() -> RedirectResponse:
-    response = RedirectResponse("/login", status_code=302)
-    response.delete_cookie(COOKIE)
-    return response
-
-
 @app.get("/", response_class=HTMLResponse)
 def dashboard(request: Request) -> HTMLResponse:
-    if not logged_in(request):
-        return RedirectResponse("/login", status_code=302)
     return templates.TemplateResponse(request=request, name="courier-index.html", context={})
 
 
@@ -154,15 +103,13 @@ def _summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 @app.get("/api/shipments")
-def api_shipments(request: Request) -> dict[str, Any]:
-    require_login(request)
+def api_shipments() -> dict[str, Any]:
     rows = list_shipments()
     return {"summary": _summary(rows), "shipments": rows}
 
 
 @app.post("/api/shipments")
-def api_add(body: ShipmentIn, request: Request) -> dict[str, Any]:
-    require_login(request)
+def api_add(body: ShipmentIn) -> dict[str, Any]:
     zone = zone_for(body.city)
     row = add_shipment(
         body.awb,
@@ -183,25 +130,21 @@ def api_add(body: ShipmentIn, request: Request) -> dict[str, Any]:
 
 
 @app.post("/api/shipments/delete")
-def api_delete(body: DeleteIn, request: Request) -> dict[str, Any]:
-    require_login(request)
+def api_delete(body: DeleteIn) -> dict[str, Any]:
     delete_shipment(body.awb, body.carrier)
     return {"ok": True}
 
 
 @app.post("/api/refresh")
-def api_refresh(request: Request) -> dict[str, Any]:
-    require_login(request)
+def api_refresh() -> dict[str, Any]:
     return refresh_all()
 
 
 @app.post("/api/alerts/fanout")
-def api_fanout(request: Request) -> dict[str, Any]:
-    require_login(request)
+def api_fanout() -> dict[str, Any]:
     return fanout_alerts()
 
 
 @app.get("/api/alerts")
-def api_alerts(request: Request) -> list[dict[str, Any]]:
-    require_login(request)
+def api_alerts() -> list[dict[str, Any]]:
     return list_alerts()
