@@ -67,7 +67,10 @@ function renderRows() {
 
 async function loadBook() {
   const res = await fetch("/api/shipments");
-  if (res.status === 401) return location.replace("/login");
+  if (!res.ok) {
+    console.error("Failed to load shipments", res.status);
+    return;
+  }
   book = await res.json();
   renderMetrics(book.summary);
   renderStatus(book.summary.by_status);
